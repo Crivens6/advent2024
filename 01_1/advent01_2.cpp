@@ -50,13 +50,25 @@ int main()
     std::sort(std::begin(list_b), std::end(list_b));
 
     // Calculate the sum total difference
-    int total_distance = 0;
-    for (int list_index; list_index < kListLength; list_index++)
+    int similarity_score = 0;
+    int index_min_b = 0;
+
+    for (int index_a = 0; index_a < kListLength; index_a++)
     {
-        total_distance += abs(list_a[list_index] - list_b[list_index]);
+        for (int index_b = index_min_b; list_a[index_a] >= list_b[index_b] && index_b < kListLength; index_b++)
+        {
+            if (list_a[index_a] > list_b[index_b])
+            {
+                index_min_b = index_b;
+            }
+            else
+            {
+                similarity_score += list_a[index_a];
+            }
+        }
     }
 
-    std::cout << "Total Distance: " << total_distance << "\n";
+    std::cout << "Similarity Score: " << similarity_score << "\n";
 
     input_file.close();
     return 0;
