@@ -18,7 +18,7 @@ int main()
         return 1;
     }
 
-    // Itterate through each report and check if it's safe
+    // Iterate through each report and check if it's safe
     int safe_report_count = 0;
     string report_line;
     while (getline(input_file, report_line))
