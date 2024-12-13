@@ -86,5 +86,6 @@ int main()
 
     std::cout << "Calibration Sum: " << calibration_sum << "\n";
 
+    input_file.close();
     return 0;
 }

@@ -106,22 +106,18 @@ int main()
     {
         int pos[2] = {guard[0], guard[1]};
         int dir = guard[2];
-        std::cout << "G:  " << guard[0] << "," << guard[1] << "\n";
         // Simulate until guard is off the map
         while (true)
         {
             int next_pos[2] = {pos[0] + kDirectionCoor[dir][0], pos[1] + kDirectionCoor[dir][1]};
-            std::cout << "NG:  " << next_pos[0] << "," << pos[1] + kDirectionCoor[dir][1] << "\n";
             // Finish if off the row
             if (0 > next_pos[0] || next_pos[0] > map_grid[0].size() - 1)
             {
-                std::cout << "Row " << next_pos[0] << "\n";
                 break;
             }
             // Finish if off the col
             if (0 > next_pos[1] || next_pos[1] > map_grid.size() - 1)
             {
-                std::cout << "Col\n";
                 break;
             }
 
@@ -159,5 +155,6 @@ int main()
 
     std::cout << "Total Walked Spaces: " << total_walked_space << "\n";
 
+    input_file.close();
     return 0;
 }

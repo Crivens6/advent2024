@@ -185,5 +185,6 @@ int main()
 
     std::cout << "Word Total: " << word_total << "\n";
 
+    input_file.close();
     return 0;
 }

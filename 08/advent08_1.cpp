@@ -108,5 +108,6 @@ int main()
     }
 
     std::cout << "Antinodes: " << antinode_count << "\n";
+    input_file.close();
     return 0;
 }

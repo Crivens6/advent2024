@@ -96,5 +96,6 @@ int main()
     }
 
     std::cout << "Middle Total: " << middle_total << "\n";
+    input_file.close();
     return 0;
 }

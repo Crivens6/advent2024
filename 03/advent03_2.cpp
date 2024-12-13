@@ -73,5 +73,6 @@ int main()
 
     std::cout << "Total Product: " << total_product << "\n";
 
+    input_file.close();
     return 0;
 }

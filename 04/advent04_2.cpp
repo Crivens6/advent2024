@@ -103,5 +103,6 @@ int main()
 
     std::cout << "X-MAS Total: " << xmas_total << "\n";
 
+    input_file.close();
     return 0;
 }

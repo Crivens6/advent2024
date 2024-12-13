@@ -229,5 +229,6 @@ int main()
 
     std::cout << "Loops Created: " << loops_created << "\n";
 
+    input_file.close();
     return 0;
 }
