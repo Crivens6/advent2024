@@ -19,8 +19,6 @@ int main()
         return 1;
     }
 
-    std::cout << "FILL FILES\n";
-
     // Iterate through each line and track the file blocks and blank blocks
     list<pair<int, int>> file_blocks;
     list<int> blank_blocks;
@@ -42,20 +40,17 @@ int main()
             {
                 blank_blocks.push_back(input_char - '0');
             }
+            is_file = !is_file;
         }
     }
+    blank_blocks.push_back(0);
 
-    std::cout << "FILL BLANK\n";
     // Iterate and move end file blocks into blank file block areas
-    list<list<pair<int, int>>> filled_blocks;
+    list<list<pair<int, int>>> filled_blocks = {{{}}};
     int blank_block_index = 0;
     while (filled_blocks.size() < file_blocks.size())
     {
-        // Create at filled block vector at the current blank block index if one does not exist
-        if (filled_blocks.size() == blank_block_index)
-        {
-            filled_blocks.push_back({{}});
-        }
+
         // Check out the end file
         pair<int, int> end_block = file_blocks.back();
         file_blocks.pop_back();
@@ -67,10 +62,14 @@ int main()
         {
             // Fill empty block completly
             filled_blocks.back().push_back({end_block.first, empty_space});
+            // Set up next blank block for filling
+            filled_blocks.push_back({{}});
             // Create reduce the remaining file size in end file and put back
             pair<int, int> reduced_end_block = end_block;
             reduced_end_block.second -= empty_space;
             file_blocks.push_back(reduced_end_block);
+            // Add file block as blank block at end
+            blank_blocks.back() += empty_space;
         }
         // Blank block larger than end file
         else if (empty_space > end_block.second)
@@ -79,18 +78,24 @@ int main()
             filled_blocks.back().push_back(end_block);
             // Calculate the remaining size of the remaining blank block and put back
             blank_blocks.push_front(empty_space - end_block.second);
+            // Add file freed space from file block as blank block at end
+            blank_blocks.back() += end_block.second;
         }
         // Blank block exact size of file
         else
         {
             // Put remain file block into blank block
             filled_blocks.back().push_back(end_block);
+            // Add file block as blank block at end
+            blank_blocks.back() += empty_space;
+            // Set up next blank block for filling
+            filled_blocks.push_back({{}});
         }
     }
-    std::cout << "CHECKSUM\n";
     // Calculate checksum
     int position = 0;
     long checksum = 0;
+
     while (file_blocks.size() > 0)
     {
         for (int i = 0; i < file_blocks.front().second; i++)
@@ -112,7 +117,7 @@ int main()
         filled_blocks.pop_front();
     }
 
-    std::cout << "Checksum: " << checksum << "\n";
+    std::cout << "\nChecksum: " << checksum << "\n";
 
     input_file.close();
     return 0;
