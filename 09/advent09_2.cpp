@@ -6,6 +6,7 @@
 using std::pair;
 using std::string;
 using std::vector;
+
 // Constants
 const string kInputFilePath = "input.txt";
 const int kBlank = -1;
@@ -46,22 +47,6 @@ int main()
         }
     }
 
-    /*for (pair<int, int> block : file_blocks)
-    {
-        for (int i = 0; i < block.second; i++)
-        {
-            if (block.first != kBlank)
-            {
-                std::cout << block.first;
-            }
-            else
-            {
-                std::cout << ".";
-            }
-        }
-        std::cout << "|";
-    }
-    std::cout << "\n";*/
     // Iterate and move end file blocks into blank file block areas
     for (int block_index = file_blocks.size() - 1; block_index > 0; block_index--)
     {
@@ -93,22 +78,6 @@ int main()
                 file_blocks.insert(file_blocks.begin() + target_index + 1, {kBlank, remaining_space});
                 block_index++;
             }
-            /*for (pair<int, int> block : file_blocks)
-            {
-                for (int i = 0; i < block.second; i++)
-                {
-                    if (block.first != kBlank)
-                    {
-                        std::cout << block.first;
-                    }
-                    else
-                    {
-                        std::cout << ".";
-                    }
-                }
-                std::cout << "|";
-            }
-            std::cout << "\n";*/
             break;
         }
     }
@@ -122,15 +91,9 @@ int main()
             if (block.first != kBlank)
             {
                 checksum += block.first * position;
-                std::cout << block.first;
-            }
-            else
-            {
-                std::cout << ".";
             }
             position++;
         }
-        std::cout << "|";
     }
 
     std::cout << "\nChecksum: " << checksum << "\n";
