@@ -117,7 +117,7 @@ int main()
         filled_blocks.pop_front();
     }
 
-    std::cout << "\nChecksum: " << checksum << "\n";
+    std::cout << "Checksum: " << checksum << "\n";
 
     input_file.close();
     return 0;
