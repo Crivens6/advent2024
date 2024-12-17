@@ -10,8 +10,8 @@ using std::string;
 using std::vector;
 
 // Constants
-const string kInputFilePath = "input_test.txt";
-const int kTotalBlinks = 5;
+const string kInputFilePath = "input.txt";
+const int kTotalBlinks = 75;
 
 class Rock;
 
@@ -38,8 +38,6 @@ public:
         this->decendents_index = {};
         for (long rock : rock_set)
         {
-
-            std::cout << "s>" << rock << "\n";
             MakeDecendentRock(rock);
         }
         this->age = 0;
@@ -107,11 +105,10 @@ private:
         {
             decendents_index.push_back(g_rock_map[new_value]);
         }
-        std::cout << "[" << value << "]->" << new_value << "\n";
     }
     void CountDecendents()
     {
-        int family_size = 0;
+        long family_size = 0;
         for (int i = 0; i < decendents_index.size(); i++)
         {
             family_size += g_rock_list[decendents_index[i]].Size(this->age);
@@ -153,12 +150,10 @@ int main()
     }
 
     Rock start_rock = Rock(start_list);
-
+    std::cout << "Blink #0 Stone Count: " << start_rock.Size(0) << "\n";
     // Iterate and move end file blocks into blank file block areas
     for (int blink_count = 0; blink_count < kTotalBlinks; blink_count++)
     {
-
-        std::cout << "BLINK \n";
 
         for (int target_rock = g_rock_list.size() - 1; target_rock >= 0; target_rock--)
         {
