@@ -12,7 +12,7 @@ using std::string;
 using std::vector;
 
 // Constants
-const string kInputFilePath = "input_test.txt";
+const string kInputFilePath = "input.txt";
 const int kDirectionCoor[4][2] = {
     {-1, 0},
     {0, 1},
@@ -25,6 +25,36 @@ enum Direction
     E,
     S,
     W,
+};
+class Side
+{
+public:
+    pair<int, int> start;
+    pair<int, int> end;
+    int face;
+    Side(pair<int, int> first, pair<int, int> second, int dir)
+    {
+        this->start = first;
+        this->end = second;
+        face = dir;
+    }
+    Side(pair<pair<int, int>, pair<int, int>> line, int dir)
+    {
+        Side(line.first, line.second, dir);
+    }
+    // operator overload to allow std::set to use Side
+    bool operator<(const Side &other) const
+    {
+        if (start != other.start)
+        {
+            return start < other.start;
+        }
+        if (end != other.end)
+        {
+            return end < other.end;
+        }
+        return face < other.face;
+    }
 };
 
 class Garden
@@ -65,7 +95,7 @@ public:
         set<pair<int, int>> newly_accounted_plots;
         list<pair<int, int>> plots_to_analize;
         // Start coord / end coord
-        set<pair<pair<int, int>, pair<int, int>>> plot_edges;
+        set<Side> plot_edges;
         newly_accounted_plots.insert({start_row, start_col});
         plots_to_analize.push_back({start_row, start_col});
         while (plots_to_analize.size() > 0)
@@ -80,7 +110,7 @@ public:
                 if (0 > adjacent_plot.first || adjacent_plot.first >= plot_grid.size() ||
                     0 > adjacent_plot.second || adjacent_plot.second >= plot_grid[0].size())
                 {
-                    plot_edges.insert(GetSideCoords(center_plot, dir));
+                    plot_edges.insert(GetSide(center_plot, dir));
                     continue;
                 }
                 // Check that plot not already found
@@ -96,7 +126,7 @@ public:
                     // If not correct char, add to perimeter
                     else
                     {
-                        plot_edges.insert(GetSideCoords(center_plot, dir));
+                        plot_edges.insert(GetSide(center_plot, dir));
                     }
                 }
             }
@@ -105,11 +135,11 @@ public:
         int side_count = 0;
         while (plot_edges.size() > 0)
         {
-            pair<pair<int, int>, pair<int, int>> first_side_section = *plot_edges.begin();
-            pair<pair<int, int>, pair<int, int>> last_side_section = first_side_section;
+            Side first_side_section = *plot_edges.begin();
+            Side last_side_section = first_side_section;
             plot_edges.erase(plot_edges.begin());
             int dirCoor[2];
-            if (first_side_section.first.first == first_side_section.second.first)
+            if (first_side_section.start.first == first_side_section.end.first)
             {
                 dirCoor[0] = kDirectionCoor[Direction::W][0];
                 dirCoor[1] = kDirectionCoor[Direction::W][1];
@@ -124,8 +154,8 @@ public:
             bool side_searching_flag = true;
             while (side_searching_flag)
             {
-                pair<int, int> new_side_point = {first_side_section.first.first + dirCoor[0], first_side_section.first.second + dirCoor[1]};
-                pair<pair<int, int>, pair<int, int>> prior_side_section = {new_side_point, first_side_section.first};
+                pair<int, int> new_side_point = {first_side_section.start.first + dirCoor[0], first_side_section.start.second + dirCoor[1]};
+                Side prior_side_section = Side(new_side_point, first_side_section.start, first_side_section.face);
                 // Check if reached end of side
                 if (plot_edges.find(prior_side_section) == plot_edges.end())
                 {
@@ -142,8 +172,8 @@ public:
             side_searching_flag = true;
             while (side_searching_flag)
             {
-                pair<int, int> new_side_point = {last_side_section.second.first - dirCoor[0], last_side_section.second.second - dirCoor[1]};
-                pair<pair<int, int>, pair<int, int>> next_side_section = {last_side_section.second, new_side_point};
+                pair<int, int> new_side_point = {last_side_section.end.first - dirCoor[0], last_side_section.end.second - dirCoor[1]};
+                Side next_side_section = Side(last_side_section.end, new_side_point, last_side_section.face);
                 // Check if reached end of side
                 if (plot_edges.find(next_side_section) == plot_edges.end())
                 {
@@ -162,29 +192,29 @@ public:
         }
 
         int cost = area * side_count;
-        std::cout << plot_char << ": " << area << "*" << side_count << "=" << cost << "\n";
+        // std::cout << plot_char << ": " << area << "*" << side_count << "=" << cost << "\n";
         return {cost, newly_accounted_plots};
     }
     // Return in Top/Down or Left/Right format
-    pair<pair<int, int>, pair<int, int>> GetSideCoords(pair<int, int> plot_coords, int dir)
+    Side GetSide(pair<int, int> plot_coords, int dir)
     {
         int row = plot_coords.first;
         int col = plot_coords.second;
         if (dir == Direction::N)
         {
-            return {{row, col}, {row, col + 1}};
+            return Side({row, col}, {row, col + 1}, dir);
         }
         else if (dir == Direction::S)
         {
-            return {{row + 1, col}, {row + 1, col + 1}};
+            return Side({row + 1, col}, {row + 1, col + 1}, dir);
         }
         else if (dir == Direction::E)
         {
-            return {{row, col + 1}, {row + 1, col + 1}};
+            return Side({row, col + 1}, {row + 1, col + 1}, dir);
         }
         else
         {
-            return {{row, col}, {row + 1, col}};
+            return Side({row, col}, {row + 1, col}, dir);
         }
     }
 };
