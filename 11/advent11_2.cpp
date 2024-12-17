@@ -25,6 +25,8 @@ public:
     vector<int> decendents_index;
     vector<long> size_history;
     int age;
+
+    // Initalize rock with a value
     Rock(long value)
     {
         this->value = value;
@@ -32,6 +34,8 @@ public:
         this->size_history.push_back(1);
         this->age = 0;
     }
+
+    // Special Rock created for inital set of rocks
     Rock(vector<long> rock_set)
     {
         this->value = -1;
@@ -45,6 +49,7 @@ public:
         this->age++;
     }
 
+    // Return the size of rock's family at age
     long Size(int age_inquiry)
     {
         if (age_inquiry > age || age_inquiry < 0)
@@ -54,11 +59,13 @@ public:
         }
         return size_history[age_inquiry];
     }
+    // Return the current full sized family
     long SizeFull()
     {
         return Size(this->age - 1);
     }
 
+    // Count the next itereation of rock family size
     void Blink()
     {
         if (this->age == 0 && this->value != -1)
@@ -85,12 +92,14 @@ public:
         CountDecendents();
         this->age++;
     }
+    // Get the current age of the rock
     int GetAge()
     {
         return this->age;
     }
 
 private:
+    // Create a new decendent rock
     void MakeDecendentRock(long new_value)
     {
         // A new value
@@ -101,6 +110,7 @@ private:
             g_rock_map[new_value] = new_index;
             g_rock_list.push_back(Rock(new_value));
         }
+        // An existing rock
         else
         {
             decendents_index.push_back(g_rock_map[new_value]);
@@ -111,8 +121,10 @@ private:
         long family_size = 0;
         for (int i = 0; i < decendents_index.size(); i++)
         {
+            // Get the family size of the desendent at one less blink than current rock
             family_size += g_rock_list[decendents_index[i]].Size(this->age);
         }
+        // Store the new family size at this rock's age
         size_history.push_back(family_size);
     }
 };
@@ -127,21 +139,18 @@ int main()
         return 1;
     }
 
-    // Iterate through each line and track the file blocks and blank blocks
-    long digit_to_stone[10][kTotalBlinks];
-    // Digit and depth
+    // Iterate through each line and get the inital rock values
     vector<long> start_list;
     string input_line;
     while (getline(input_file, input_line))
     {
         int scan_index = 0;
-
-        // Get the first num
         size_t end_of_num = 0;
 
         // Loop through each number until the end of the line
         while (scan_index < input_line.size())
         {
+            // Add value to list for starting rock set
             start_list.push_back(std::stol(input_line.substr(scan_index), &end_of_num));
 
             // Increment over the number and space
@@ -149,18 +158,21 @@ int main()
         }
     }
 
+    // Create the starting rock set
     Rock start_rock = Rock(start_list);
     std::cout << "Blink #0 Stone Count: " << start_rock.Size(0) << "\n";
-    // Iterate and move end file blocks into blank file block areas
+
+    // Blink kTotalBlinks times
     for (int blink_count = 0; blink_count < kTotalBlinks; blink_count++)
     {
-
+        // Go through each rock and calculate a new size after blinking
         for (int target_rock = g_rock_list.size() - 1; target_rock >= 0; target_rock--)
         {
             Rock this_rock = g_rock_list[target_rock];
             this_rock.Blink();
             g_rock_list[target_rock] = this_rock;
         }
+        // Get the size of the rock set
         start_rock.Blink();
         std::cout << "Blink #" << (blink_count + 1) << " Stone Count: " << start_rock.SizeFull() << "\n";
     }
