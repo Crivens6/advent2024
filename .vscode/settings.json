@@ -53,5 +53,11 @@
         "sstream": "cpp",
         "map": "cpp",
         "set": "cpp"
-    }
+    },
+    "[plaintext]": {
+        "editor.suggest.showSnippets": false,
+        "editor.suggest.showWords": false,
+        "editor.acceptSuggestionOnCommitCharacter": false,
+        "editor.acceptSuggestionOnEnter": "off"
+    },
 }
