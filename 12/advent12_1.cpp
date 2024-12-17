@@ -33,7 +33,6 @@ private:
     vector<vector<char>> plot_grid;
 
 public:
-    Garden();
     void AddRow(vector<char> plot_row)
     {
         plot_grid.push_back(plot_row);
@@ -61,7 +60,7 @@ public:
     {
 
         char plot_char = plot_grid[start_row][start_col];
-        int area = 0;
+        int area = 1;
         int perimeter = 0;
 
         set<pair<int, int>> newly_accounted_plots;
@@ -76,6 +75,13 @@ public:
             {
                 pair<int, int> adjacent_plot = {center_plot.first + kDirectionCoor[dir][0],
                                                 center_plot.second + kDirectionCoor[dir][1]};
+                // Check that plot is on the grid
+                if (0 > adjacent_plot.first || adjacent_plot.first >= plot_grid.size() ||
+                    0 > adjacent_plot.second || adjacent_plot.second >= plot_grid[0].size())
+                {
+                    perimeter++;
+                    continue;
+                }
                 // Check that plot not already found
                 if (newly_accounted_plots.find(adjacent_plot) == newly_accounted_plots.end())
                 {
@@ -95,6 +101,7 @@ public:
             }
         }
         int cost = area * perimeter;
+        // std::cout << plot_char << ": " << area << "*" << perimeter << "=" << cost << "\n";
         return {cost, newly_accounted_plots};
     }
 };
