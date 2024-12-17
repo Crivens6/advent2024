@@ -60,4 +60,7 @@
         "editor.acceptSuggestionOnCommitCharacter": false,
         "editor.acceptSuggestionOnEnter": "off"
     },
+    "editor.showFoldingControls": "always",
+    "editor.folding": true,
+    "editor.foldingStrategy": "indentation",
 }
