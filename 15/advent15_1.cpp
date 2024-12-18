@@ -8,7 +8,7 @@ using std::string;
 using std::vector;
 
 // Constants
-const string kInputFilePath = "input_smaller.txt";
+const string kInputFilePath = "input.txt";
 const int kDirectionCoor[4][2] = {
     {-1, 0},
     {0, 1},
@@ -153,36 +153,6 @@ int main()
                 }
             }
         }
-        char s[4] = {'^', '>', 'V', '<'};
-        std::cout << "\nStep: " << s[dir] << "\n";
-
-        for (int row = 0; row < map_grid.size(); row++)
-        {
-            for (int col = 0; col < map_grid[0].size(); col++)
-            {
-                if (robot_coords.first == row && robot_coords.second == col)
-                {
-                    std::cout << "@";
-                }
-                else
-                {
-                    switch (map_grid[row][col])
-                    {
-                    case GridSquare::Empty:
-                        std::cout << " ";
-                        break;
-
-                    case GridSquare::Box:
-                        std::cout << "O";
-                        break;
-                    case GridSquare::Wall:
-                        std::cout << "#";
-                        break;
-                    }
-                }
-            }
-            std::cout << "\n";
-        }
     }
 
     int gps_score = 0;
@@ -195,28 +165,7 @@ int main()
             {
                 gps_score += 100 * row + col;
             }
-            if (robot_coords.first == row && robot_coords.second == col)
-            {
-                std::cout << "@";
-            }
-            else
-            {
-                switch (map_grid[row][col])
-                {
-                case GridSquare::Empty:
-                    std::cout << " ";
-                    break;
-
-                case GridSquare::Box:
-                    std::cout << "O";
-                    break;
-                case GridSquare::Wall:
-                    std::cout << "#";
-                    break;
-                }
-            }
         }
-        std::cout << "\n";
     }
 
     std::cout << "GPS Score: " << gps_score << "\n";
