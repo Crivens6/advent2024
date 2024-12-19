@@ -1,16 +1,18 @@
 #include <deque>
 #include <fstream>
 #include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 
 using std::deque;
 using std::pair;
+using std::set;
 using std::string;
 using std::vector;
 
 // Constants
-const string kInputFilePath = "input_small.txt";
+const string kInputFilePath = "input_other.txt";
 const int kMoveScore = 1;
 const int kTurnScore = 1000;
 const int kMoveDir[4][2] = {
@@ -30,10 +32,10 @@ enum Direction
 
 enum MazeSquare
 {
-    Empty = 0,
-    Wall,
-    Start,
-    End
+    Empty = -1,
+    Wall = -2,
+    Start = 0,
+    End = -3
 };
 
 vector<vector<int>> g_map_grid;
@@ -45,31 +47,34 @@ private:
     int y;
     int score;
     Direction dir;
+    set<pair<int, int>> history;
     pair<int, int> GetNextCoord(Direction next_dir)
     {
         return {x + kMoveDir[next_dir][0], y + kMoveDir[next_dir][1]};
     }
 
 public:
-    PathFinder(pair<int, int> coords, Direction dir = Direction::E, int score = 0)
+    PathFinder(pair<int, int> coords, Direction dir = Direction::E, int score = 0, set<pair<int, int>> history = {})
     {
         this->x = coords.first;
         this->y = coords.second;
         this->score = score;
         this->dir = dir;
-        std::cout << "   <" << x << "," << y << ">\n";
+        this->history = history;
+        std::cout << "    <" << x << "," << y << ">\n";
     }
     deque<PathFinder> NextGen()
     {
         deque<PathFinder> next_gen_list;
+        history.insert({x, y});
         // Forward
-        next_gen_list.push_back(PathFinder(GetNextCoord(dir), dir, score + kMoveScore));
+        next_gen_list.push_back(PathFinder(GetNextCoord(dir), dir, score + kMoveScore, history));
         // Left
         Direction left_dir = (Direction)(((int)dir + 3) % 4);
-        next_gen_list.push_back(PathFinder(GetNextCoord(left_dir), left_dir, score + kMoveScore + kTurnScore));
+        next_gen_list.push_back(PathFinder(GetNextCoord(left_dir), left_dir, score + kMoveScore + kTurnScore, history));
         // Right
         Direction right_dir = Direction(((int)dir + 1) % 4);
-        next_gen_list.push_back(PathFinder(GetNextCoord(right_dir), right_dir, score + kMoveScore + kTurnScore));
+        next_gen_list.push_back(PathFinder(GetNextCoord(right_dir), right_dir, score + kMoveScore + kTurnScore, history));
 
         return next_gen_list;
     }
@@ -79,7 +84,17 @@ public:
         {
             return MazeSquare::Wall;
         }
-        return (MazeSquare)g_map_grid[x][y];
+        if (history.find({x, y}) != history.end())
+        {
+            return MazeSquare::Wall;
+        }
+        if (g_map_grid[x][y] > score + kTurnScore)
+        {
+            return MazeSquare::Wall;
+        }
+        MazeSquare my_spot = (MazeSquare)g_map_grid[x][y];
+        g_map_grid[x][y] = std::min(score, g_map_grid[x][y]);
+        return my_spot;
     }
     int GetScore()
     {
@@ -149,16 +164,20 @@ int main()
         MazeSquare scout_square = scout.CheckSpot(min_score);
         if (scout_square == MazeSquare::Empty || scout_square == MazeSquare::Start)
         {
-            std::cout << "New!: \n";
+            std::cout << "NEW!:\n";
             deque<PathFinder> next_gen = scout.NextGen();
             scout_list.insert(scout_list.end(), next_gen.begin(), next_gen.end());
         }
         else if (scout_square == MazeSquare::End)
         {
-            std::cout << "END!: " << scout.GetScore()<< "\n";
+            std::cout << "END!: " << scout.GetScore() << "\n";
             min_score = scout.GetScore();
         }
-        std::cout << "DIED! " << "\n";
+        else
+        {
+
+            std::cout << "DEAD!\n";
+        }
     }
 
     std::cout << "Reindeer Score: " << min_score << "\n";
