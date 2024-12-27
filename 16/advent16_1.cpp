@@ -14,7 +14,7 @@ using std::string;
 using std::vector;
 
 // Constants
-const string kInputFilePath = "input_small.txt";
+const string kInputFilePath = "input.txt";
 const int kMoveScore = 1;
 const int kTurnScore = 1000;
 const int kMoveDir[4][2] = {
@@ -56,7 +56,6 @@ private:
 public:
     SimpleNode(int node_a_index, int node_a_dist, int node_b_index, int node_b_dist, int node_c_index, bool is_end = false)
     {
-        std::cout << "    " << node_a_index << ", " << node_b_index << "\n";
         connected_nodes[0] = node_a_index;
         connection_score[0] = node_a_dist;
         connected_nodes[1] = node_b_index;
@@ -135,27 +134,18 @@ public:
 
     vector<SimpleNode> SplitToSimpleNodes()
     {
-        std::cout << self_index << ": \n";
-        std::cout << "    " << connected_nodes[1] << ", " << connected_nodes[3] << "\n"
-                  << "    " << connected_nodes[0] << ", " << connected_nodes[2] << "\n    ----\n";
         SimpleNode horizontal = SimpleNode(SimpleNodeIndex(1), connection_score[1], SimpleNodeIndex(3), connection_score[3], (self_index * 2) + 1);
         SimpleNode vertical = SimpleNode(SimpleNodeIndex(0), connection_score[0], SimpleNodeIndex(2), connection_score[2], (self_index * 2));
         return {horizontal, vertical};
     }
     vector<SimpleNode> SplitEndNode()
     {
-        std::cout << self_index << ": \n";
-        std::cout << "    " << connected_nodes[1] << ", " << connected_nodes[3] << "\n"
-                  << "    " << connected_nodes[0] << ", " << connected_nodes[2] << "\n    ----\n";
         SimpleNode horizontal = SimpleNode(SimpleNodeIndex(1), connection_score[1], SimpleNodeIndex(3), connection_score[3], (self_index * 2) + 1, true);
         SimpleNode vertical = SimpleNode(SimpleNodeIndex(0), connection_score[0], SimpleNodeIndex(2), connection_score[2], (self_index * 2), true);
         return {horizontal, vertical};
     }
     vector<SimpleNode> SplitStartNode()
     {
-        std::cout << self_index << ": \n";
-        std::cout << "    " << connected_nodes[1] << ", " << connected_nodes[3] << "\n"
-                  << "    " << connected_nodes[0] << ", " << connected_nodes[2] << "\n    ----\n";
         SimpleNode horizontal = SimpleNode(SimpleNodeIndex(1), connection_score[1], SimpleNodeIndex(3), connection_score[3], (self_index * 2) + 1);
         SimpleNode vertical = SimpleNode(SimpleNodeIndex(0), connection_score[0], SimpleNodeIndex(2), connection_score[2], (self_index * 2));
         horizontal.SetMinDistance(0);
@@ -425,7 +415,6 @@ int main()
             {
                 if (min_index == -1 || simple_nodes[i].GetMinDistance() < min_distance)
                 {
-                    std::cout << i << " Picked: " << simple_nodes[i].GetMinDistance() << " < " << min_distance << "\n";
                     min_index = i;
                     min_distance = simple_nodes[i].GetMinDistance();
                 }
@@ -435,7 +424,6 @@ int main()
         {
             break;
         }
-        std::cout << min_index << ": " << min_distance << "\n";
         visited_nodes.insert(min_index);
         // Visit Neighbors
         for (int i = 0; i < 3; i++)
@@ -443,7 +431,6 @@ int main()
             pair<int, int> neighbor = simple_nodes[min_index].GetNeighbor(i);
             if (neighbor.first != -1 && visited_nodes.find(neighbor.first) == visited_nodes.end())
             {
-                std::cout << "    " << neighbor.first << ", " << neighbor.second << "\n";
                 simple_nodes[neighbor.first].SetMinDistance(min_distance + neighbor.second);
             }
         }
