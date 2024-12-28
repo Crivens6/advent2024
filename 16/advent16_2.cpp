@@ -14,7 +14,7 @@ using std::string;
 using std::vector;
 
 // Constants
-const string kInputFilePath = "input_other.txt";
+const string kInputFilePath = "input_test.txt";
 const int kMoveScore = 1;
 const int kTurnScore = 1000;
 const int kMoveDir[4][2] = {
@@ -499,10 +499,10 @@ int main()
     }
 
     // Walk backards through solved simple node map to get paths
-    set<pair<int, int>> min_area_paths = simple_nodes[end_node].GetMinArea();
     std::cout << "Min Score: " << simple_nodes[end_node].GetMinDistance() << "\n";
-    std::cout << "Good Seats: " << min_area_paths.size() << "\n";
+    std::cout << "Good Seats: " << simple_nodes[end_node].GetMinArea().size() << "\n";
+    std::cout << "Good Seats: " << simple_nodes[end_node + 1].GetMinArea().size() << "\n";
 
-    simple_nodes[end_node].PrintNodePath();
+    simple_nodes[end_node + 1].PrintNodePath();
     return 0;
 }
